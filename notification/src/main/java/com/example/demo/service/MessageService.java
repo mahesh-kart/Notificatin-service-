@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface MessageService {
 
-    public String send_sms(Message message);
+    public String sendSms(Message message);
     public Optional<Message> getMessageById(String id);
 
 }

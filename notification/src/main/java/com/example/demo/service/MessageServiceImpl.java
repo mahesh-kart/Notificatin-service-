@@ -15,13 +15,19 @@ public class MessageServiceImpl implements MessageService{
     @Autowired
     MessageRepository messageRepository;
 
+    @Autowired
+    Producer producer;
+
+
+
     @Override
-    public String send_sms(Message message) {
+    public String sendSms(Message message) {
 
 
         message.setId(UUID.randomUUID().toString());
         message.setStatus("Queued");
         messageRepository.save(message);
+        producer.sendMessageId(message);
         return HttpStatus.ACCEPTED+ "  "+message.toString();
 
     }

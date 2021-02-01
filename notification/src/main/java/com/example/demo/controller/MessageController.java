@@ -17,7 +17,7 @@ public class MessageController {
 @PostMapping("/send")
     public String send_sms(@RequestBody Message message)
 {
-    return messageService.send_sms(message);
+    return messageService.sendSms(message);
 }
 
 @GetMapping("/{request_id}")

@@ -22,3 +22,7 @@ public class NotificationApplication {
 //		"phoneNumber":"7779895245952",
 //		"message": "jhvkjv  gyftfy yfttx lnjjnbh iohgyuftf9"
 //		}
+
+//
+//bin/zookeeper-server-start.sh config/zookeeper.properties
+//		bin/kafka-server-start.sh config/server.properties
