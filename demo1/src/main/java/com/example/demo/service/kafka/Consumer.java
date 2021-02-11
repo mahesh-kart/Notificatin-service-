@@ -11,6 +11,7 @@ import com.example.demo.repository.MessageRepository;
 import com.example.demo.service.message.MessageService;
 import com.example.demo.service.redis.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,8 @@ public class Consumer {
     RedisService redisService;
     @Autowired
     MessageRepository messageRepository;
+    @Autowired
+    ElasticsearchRepository elasticsearchRepository;
 
 
     @KafkaListener (topics="${kafka.topic}")
@@ -53,7 +56,7 @@ public class Consumer {
                 // perfom 3 part api
                 // set staus of message accoprding to response of api
                 // do elastic save here
-
+                elasticsearchRepository.save(messageObject);
                 System.out.println("Not Blacklisted");
             }
 
