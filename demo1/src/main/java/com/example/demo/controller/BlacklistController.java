@@ -55,7 +55,7 @@ try{
         catch(Exception ex)
         {
 
-            return new ResponseEntity<>(new error(ex.getLocalizedMessage(), "mc bc"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new error(ex.getLocalizedMessage(), ex.getMessage()), HttpStatus.BAD_REQUEST);
 
         }
 

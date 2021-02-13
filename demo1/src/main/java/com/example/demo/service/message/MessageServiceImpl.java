@@ -1,6 +1,8 @@
 package com.example.demo.service.message;
 
 import com.example.demo.MessageStatus;
+
+import com.example.demo.controller.KafkaController;
 import com.example.demo.model.Message;
 import com.example.demo.model.UserSmsInput;
 import com.example.demo.repository.MessageRepository;
@@ -24,9 +26,12 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     RedisService redisService;
+    @Autowired
+    KafkaController kafkaController;
+
 
     @Override
-    public Message sendSms(UserSmsInput userSmsInput) {
+     public Message sendSms(UserSmsInput userSmsInput) {
 //        if(redisService.checkIfExist(userSmsInput.getPhoneNumber()))
 //            return "Blacklisted";
         Message message=new Message();
@@ -35,7 +40,11 @@ public class MessageServiceImpl implements MessageService {
         message.setId(UUID.randomUUID().toString());
         message.setStatus(MessageStatus.QUEUED);
         messageRepository.save(message);
-        producer.sendMessageId(message);
+        System.out.println("Before producer");
+       // producer.sendMessageId(message);
+kafkaController.sendToKafka(message);
+        System.out.println("After producer");
+
         return message;
 
     }

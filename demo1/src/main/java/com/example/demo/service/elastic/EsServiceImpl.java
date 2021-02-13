@@ -14,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.DataInput;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -66,9 +68,14 @@ EsRepository esRepository;
     @Autowired
     Helper helper;
 
+    @Autowired
+    ElasticsearchRepository elasticsearchRepository;
+
     @Override
     public void save(EsModel eSmodel) {
         esRepository.save(eSmodel);
+
+
     }
 
     @Override
@@ -83,7 +90,7 @@ EsRepository esRepository;
         long startEpoch= helper.DateConverter(dateInput.getStartDate());
         long endEpoch=helper.DateConverter(dateInput.getEndDate());
 
-        return esRepository.findAllByCreatedAtBetween(startEpoch,endEpoch,PageRequest.of(0,2));
+        return esRepository.findAllByCreatedAtBetween(startEpoch,endEpoch,PageRequest.of(0,15));
 
 
 

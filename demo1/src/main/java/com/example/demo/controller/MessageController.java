@@ -60,7 +60,10 @@ public class MessageController {
             data successResponse = new data();
             successResponse.setRequestId(message.getId());
 //           message.setStatus(MessageStatus.SUCCESS);
+            message=messageService.getMessageById(message.getId()).get();
             MessageStatus messageStatus = message.getStatus();
+            System.out.println(messageStatus);
+            System.out.println(MessageStatus.SUCCESS);
 
             if (messageStatus == MessageStatus.SUCCESS) {
                 data DataReturn = new data();
@@ -109,6 +112,8 @@ public class MessageController {
 //  bin/kafka-server-start.sh config/server.properties
 //  ./bin/elasticsearch
 //  src/redis-server
+// sudo lsof -i :9091
+//kill -9 29335
 
 
 

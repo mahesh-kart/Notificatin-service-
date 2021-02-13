@@ -20,6 +20,7 @@ public class EsModel {
 
     @Id
     private String id;
+
     private String phoneNumber;
     private String message;
     private Date createdAt;
