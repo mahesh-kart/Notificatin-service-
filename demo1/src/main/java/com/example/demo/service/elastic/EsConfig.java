@@ -84,5 +84,4 @@ public class EsConfig {
         return new ElasticsearchRestTemplate(elasticsearchClient());
     }
 
-
 }

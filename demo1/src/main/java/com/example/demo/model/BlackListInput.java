@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 @AllArgsConstructor
 public class BlackListInput {
 
-    private ArrayList<String> phone_numbers;
+    @JsonProperty("phone_numbers")
+    private ArrayList<String> phoneNumber;
 
 }

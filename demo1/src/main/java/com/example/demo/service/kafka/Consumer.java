@@ -12,7 +12,9 @@ import com.example.demo.imiConnectApi.model.SmsModel;
 import com.example.demo.imiConnectApi.response.ExternalApiResponse;
 import com.example.demo.imiConnectApi.service.SmsSender;
 import com.example.demo.imiConnectApi.statusCodesEnum.ExternalApiStatus;
+import com.example.demo.model.EsModel;
 import com.example.demo.model.Message;
+import com.example.demo.repository.EsRepository;
 import com.example.demo.repository.MessageRepository;
 import com.example.demo.service.elastic.EsService;
 import com.example.demo.service.message.MessageService;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,7 +43,7 @@ public class Consumer {
     @Autowired
     MessageRepository messageRepository;
     @Autowired
-    ElasticsearchRepository elasticsearchRepository;
+    EsRepository esRepository;
 
     @Autowired
     EsService esService;
@@ -49,23 +52,21 @@ public class Consumer {
     SmsSender smsSender;
 
 
+
     @KafkaListener (topics="${kafka.topic}",groupId = "${spring.kafka.consumer.group-id}")
     public void consumeMessageId(String messageId) throws NotFoundException{
 
         try
         {
-            Optional<Message> message=Optional.ofNullable(messageRepository.findById(messageId).orElse(null));
+            if(!messageRepository.findById(messageId).isPresent())
+                throw new NotFoundException("Cannot find the message in DB");
+            Optional<Message> message = messageRepository.findById(messageId);
             Message messageObject=message.get();
-            if(messageObject==null)
-            {
-                throw new NotFoundException("Cannot find the message in db");
-            }
-
             if(redisService.checkIfExist(messageObject.getPhoneNumber()))
             {
                 messageObject.setStatus(MessageStatus.FAILURE);
                 messageObject.setFailureComments("BlackListed NUmber");
-                messageObject.setFailureCode("400");
+                messageObject.setFailureCode("200");
                 System.out.println("Blacklisted");
                 //messageRepository.deleteById(messageObject.getId());
                 messageRepository.save(messageObject);
@@ -97,7 +98,7 @@ public class Consumer {
                         .destination(destinationList)
                         .build();
 
-                elasticsearchRepository.save(messageObject);
+                esRepository.save(new EsModel(messageObject));
             String response= smsSender.sendSms(smsModel);
 
                 System.out.println(response);

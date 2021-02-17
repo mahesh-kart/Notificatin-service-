@@ -9,10 +9,16 @@ import com.example.demo.repository.MessageRepository;
 import com.example.demo.service.kafka.Producer;
 import com.example.demo.service.message.MessageService;
 import com.example.demo.service.redis.RedisService;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.security.PublicKey;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.UUID;
 
 @Service
@@ -29,6 +35,9 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     KafkaController kafkaController;
 
+    @Autowired
+    KafkaTemplate kafkaTemplate;
+
 
     @Override
      public Message sendSms(UserSmsInput userSmsInput) {
@@ -41,8 +50,12 @@ public class MessageServiceImpl implements MessageService {
         message.setStatus(MessageStatus.QUEUED);
         messageRepository.save(message);
         System.out.println("Before producer");
-       // producer.sendMessageId(message);
-kafkaController.sendToKafka(message);
+       producer.sendMessageId(message);
+
+
+
+
+//kafkaTemplate.send("tbp",message);
         System.out.println("After producer");
 
         return message;
@@ -57,4 +70,5 @@ kafkaController.sendToKafka(message);
 
 
     }
+
 }

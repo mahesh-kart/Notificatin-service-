@@ -21,42 +21,13 @@ import org.springframework.stereotype.Service;
 import java.io.DataInput;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 
 public class EsServiceImpl implements EsService {
 
-//    @Autowired
-//    EsRepository esRepository;
-//
-//    @Autowired
-//    ElasticsearchRestTemplate elasticsearchRestTemplate;
-//
-//
-//    @Override
-//    public EsModel saveSms(EsModel esModel) {
-//        System.out.println("2");
-//        esRepository.save(esModel);
-//        return esModel;
-//    }
-//
-//    @Override
-//    public Page<EsModel> findMessageByText(String text) {
-//
-//        return esRepository.findByMessage(text, PageRequest.of(0,2));
-//
-//    }
-//
-//    @Override
-//    public Page<EsModel> findMessageByDate(DateInput dateInput) {
-//        System.out.println(dateInput.getStartDate());
-//        System.out.println(dateInput.getEndDate());
-//
-//
-//
-//        return  null;
-//
-//    }
+
 
 @Autowired
 EsRepository esRepository;
@@ -79,21 +50,26 @@ EsRepository esRepository;
     }
 
     @Override
-    public Page<EsModel> findByMessage(String messageText) {
+    public Page<EsModel> findByMessage(String messageText, Optional<Integer> page) {
 
-        return esRepository.findByMessage(messageText,PageRequest.of(0,2));
+        return esRepository.findByMessage(messageText,  PageRequest.of(page.orElse(0),2));
     }
 
     @Override
-    public Page<EsModel> findByDate(DateInput dateInput) {
+    public Page<EsModel> findByDate(DateInput dateInput,Optional<Integer> page) {
 //
         long startEpoch= helper.DateConverter(dateInput.getStartDate());
         long endEpoch=helper.DateConverter(dateInput.getEndDate());
 
-        return esRepository.findAllByCreatedAtBetween(startEpoch,endEpoch,PageRequest.of(0,15));
+        return esRepository.findAllByCreatedAtBetween(startEpoch,endEpoch,PageRequest.of(page.orElse(0),2));
 
 
 
     }
+//    @Override
+//    public Page<EsModel>getAll()
+//    {
+//        return (Page<EsModel>) esRepository.findAll();
+//    }
 
 }

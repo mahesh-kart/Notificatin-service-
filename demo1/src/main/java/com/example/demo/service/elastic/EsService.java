@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import java.io.DataInput;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface EsService {
 
@@ -18,8 +19,9 @@ public interface EsService {
 //    public Page<EsModel>findMessageByDate(DateInput dateInput);
 
     public void save(EsModel esModel);
-    public Page<EsModel> findByMessage(String messageText);
-    public Page<EsModel> findByDate(DateInput dateInput);
+    public Page<EsModel> findByMessage(String messageText, Optional<Integer> page);
+    public Page<EsModel> findByDate(DateInput dateInput,Optional<Integer> page);
 
 
+   // Page<EsModel> getAll();
 }

@@ -1,19 +1,15 @@
 package com.example.demo.controller;
 
 import com.example.demo.MessageStatus;
-import com.example.demo.exception.InvalidRequestException;
-import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.Message;
 import com.example.demo.model.UserSmsInput;
-import com.example.demo.response.data;
-import com.example.demo.response.error;
+import com.example.demo.response.DataResponse;
+import com.example.demo.response.ErrorResponse;
 import com.example.demo.service.message.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/sms")
@@ -22,42 +18,22 @@ public class MessageController {
     @Autowired
     MessageService messageService;
 
-//    @PostMapping("/send")
-//    public data sendSms(@RequestBody UserSmsInput userSmsInput)
-//    {
-//        if(userSmsInput.getMessage().isEmpty() || userSmsInput.getMessage().trim().isEmpty())
-//            throw new InvalidRequestException("Can't send empty message");
-//        if(userSmsInput.getPhoneNumber().isEmpty() || userSmsInput.getPhoneNumber().trim().isEmpty())
-//            throw new InvalidRequestException("Phone no can't be empty");
-//
-//        Message message = messageService.sendSms(userSmsInput);
-//
-//        data successResponse = new data();
-//        successResponse.setRequestId(message.getId());
-//
-//        MessageStatus messageStatus=message.getStatus();
-//
-//        if(messageStatus==MessageStatus.SUCCESS)
-//            successResponse.setComments("Successfully Sent");
-//        else
-//            successResponse.setComments("Failure");
-//        return successResponse;
-//    }
+
     @PostMapping("/send")
     public ResponseEntity<Object> sendSms(@RequestBody UserSmsInput userSmsInput)
     {
         if(userSmsInput.getMessage().isEmpty() || userSmsInput.getMessage().trim().isEmpty()) {
 
-            return new ResponseEntity<>(new error("INVALID_REQUEST","message is mandatory"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorResponse("INVALID_REQUEST","message is mandatory"), HttpStatus.BAD_REQUEST);
         }
         if(userSmsInput.getPhoneNumber().isEmpty() || userSmsInput.getPhoneNumber().trim().isEmpty())
-            return new ResponseEntity<>(new error("INVALID_REQUEST","phone_number is mandatory"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorResponse("INVALID_REQUEST","phone_number is mandatory"), HttpStatus.BAD_REQUEST);
 
 
         try {
             Message message = messageService.sendSms(userSmsInput);
 
-            data successResponse = new data();
+            DataResponse successResponse = new DataResponse();
             successResponse.setRequestId(message.getId());
 //           message.setStatus(MessageStatus.SUCCESS);
             message=messageService.getMessageById(message.getId()).get();
@@ -65,19 +41,17 @@ public class MessageController {
             System.out.println(messageStatus);
             System.out.println(MessageStatus.SUCCESS);
 
-            if (messageStatus == MessageStatus.SUCCESS) {
-                data DataReturn = new data();
-                DataReturn.setComments("Successfully Sent");
-                DataReturn.setRequestId(message.getId());
 
-                return new ResponseEntity<>(DataReturn, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new error("INVALID_REQUEST", "Blacklisted Number"), HttpStatus.BAD_REQUEST);
-            }
+                DataResponse dataResponse = new DataResponse();
+            dataResponse.setComments("Successfully Sent");
+            dataResponse.setRequestId(message.getId());
+
+                return new ResponseEntity<>(dataResponse, HttpStatus.OK);
+
         }
         catch (Exception ex)
         {
-            return new ResponseEntity<>(new error(ex.getLocalizedMessage(), ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ErrorResponse(ex.getLocalizedMessage(), ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
@@ -89,18 +63,18 @@ public class MessageController {
        try{
 
             if (!messageService.getMessageById(request_id).isPresent()) {
-                return new ResponseEntity<>(new error("INVALID_REQUEST", "request_id not found"), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ErrorResponse("INVALID_REQUEST", "request_id not found"), HttpStatus.NOT_FOUND);
             }
             else
             {
-                data data = new data(messageService.getMessageById(request_id).get());
+                DataResponse data = new DataResponse(messageService.getMessageById(request_id).get());
                 return new ResponseEntity<>(data,HttpStatus.OK);
             }
 
 
     }
         catch(Exception ex){
-            return new ResponseEntity<>(new error(ex.getLocalizedMessage(), ex.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorResponse(ex.getLocalizedMessage(), ex.getMessage()), HttpStatus.BAD_REQUEST);
         }
 //    return messageService.getMessageById(request_id);
     }

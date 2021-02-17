@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class data {
+public class DataResponse {
     private String requestId;
     private String comments;
 
@@ -40,7 +40,7 @@ public class data {
 
 
 
-    public data (Message message)
+    public DataResponse(Message message)
     {
         this.id=message.getId();
         this.phoneNumber=message.getPhoneNumber();

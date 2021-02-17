@@ -1,14 +1,14 @@
-package com.example.demo.response;
+package com.example.demo.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class error {
-
-    private String code;
-    private String message;
+public class MessageInput {
+    private String messageInput;
 }
